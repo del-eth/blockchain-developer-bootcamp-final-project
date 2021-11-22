@@ -1,29 +1,31 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.5.16 <0.9.0;
+pragma solidity ^0.8.0;
 
 contract ProofOfTrees {
     address payable public owner;
 
-    // <trees mapping>
-    mapping(uint256 => Tree) trees;
+    //map of unique EXIF hash to determined tree data
+    mapping(string => Tree) trees;
+    
     enum TreeState {
-        Submitted,
-        UnderReview,
         Approved,
-        Paid
+        Paid,
+        Rejected,
+        Submitted,
+        UnderReview
     }
 
     enum TreeType {
-        Evergreen,
-        Disiduous
+        Disiduous,
+        Evergreen
     }
 
     struct Tree {
+        string exifSHA;
         string name;
-        string exifSHAHash;
+        TreeState tState;
+        TreeType tType;
         uint256 lat;
         uint256 long;
-        TreeType ttype;
-        TreeState state;
     }
 }
