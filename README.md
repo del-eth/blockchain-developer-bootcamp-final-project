@@ -14,17 +14,28 @@ Proof of Trees is a protocol that allows for individuals to participate in carbo
 2. Some governing DAO has an agreed-upon process and software that correctly signs the artifacts (images of trees) for upload. The version of the submission software signs the image with something that can be verified. The DAO has agreed on this input software and is confident it will prevent EXIF data from being spoofed/faked on submission. There will be some centralizing factors since storing images on the blockchain is impractical. The idea is that a version of the software and how it signs, where it uploads to, and what database curators work from is known and agreed upon by some process.
 
 ### Workflows
-#### Hippy Workflows
-- Hippy plants a tree in the real world
+#### Hippie Workflows
+- Hippie plants a tree in the real world
 - photos taken of planted trees (or other proof of green activity) uploaded to some service and signed by some app. Includes geolocation data. We'll assume that service will create a hash signature of the EXIF data of the image. This will be the tree's unique Id. 
-- After a curator reviews, the hippy gets a token. 
+- After a curator reviews, the Hippie gets a token. 
 
 #### Curator Workflow
 - Curator reviews tree image for originality and then works through an approval process, updating the `TreeStatus` of the Tree
 
-### Improvements
+#### Tree lifecycle
+
+Status goes
+1) Pending (default upon creation)
+2) Submitted (assign to a curator)
+3) UnderReview (curator has begun working on this)
+4) Rejected -or- Paid
+
+### Future Improvements
+- I considered having different statuses for under review after submitted, but this would require another blockchain transaction
+- There would need to be some kind of Keeper that might reassign a submitted tree if too much time has elapsed
 - In practice, a Kleros-style court could review disputes and/or handle final payout.
-- Curators might need to earn something for doing consistent high-quality work
+- Curators might need to earn something for doing consistent high-quality work (this would help alleviate gas fees)
+- Costs could be lowered by putting this application on L2. There probably isn't much reason to hurry to get these tokens back to L1 and if there were, something like Hop protocol might be leveraged. 
 - Ideally, once a certain amount of trees are planted some kind of carbon credit could be issued and relayed back into the carbon credits market. Perhaps something like KlimaDAO could facilitate this.
 
 ### Other considerations
