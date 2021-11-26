@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract ProofOfTrees {
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+contract ProofOfTrees{
     address public owner;
     uint256 public treeCount;
     uint256 public lastCurator;
