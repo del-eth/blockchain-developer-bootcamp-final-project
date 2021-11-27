@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract ProofOfTrees{
+contract ProofOfTrees is ERC20{
     address public owner;
     uint256 public treeCount;
     uint256 public lastCurator;
@@ -39,8 +39,8 @@ contract ProofOfTrees{
         string rejectedReason;
         TreeStatus tStatus;
         TreeType tType;
-        uint256 lat;
-        uint256 long;
+        uint256 lat; //latitude
+        uint256 long; //longitude
     }
 
     /*
@@ -120,7 +120,8 @@ contract ProofOfTrees{
         _;
     }
 
-    constructor() {
+    constructor(uint256 _initialSupply) ERC20("Tree proof", "TREE") {
+        _mint (msg.sender, _initialSupply * (1000 ** decimals()));
         owner = msg.sender;
         curators.push(msg.sender);
         treeCount = 0;
