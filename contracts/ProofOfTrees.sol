@@ -181,4 +181,30 @@ contract ProofOfTrees is ERC20{
     function pay(string memory _exifSHA) public isCurator(_exifSHA) {
         //TODO: come up with some arbitrary way to give token (make something in constructor)
     }
+
+
+    function fetchTree(string memory _exifSHA)
+        public
+        view
+        returns (
+            address payable curator,
+            address payable hippie,
+            string memory exifSHA,
+            string memory rejectedReason,
+            uint8 tStatus,
+            uint8 tType,
+            uint256 lat,
+            uint256 long
+        )
+    {
+        curator = trees[_exifSHA].curator;
+        hippie = trees[_exifSHA].hippie;
+        exifSHA = trees[_exifSHA].exifSHA;
+        rejectedReason = trees[_exifSHA].rejectedReason;
+        tStatus = uint8(trees[_exifSHA].tStatus);
+        tType = uint8(trees[_exifSHA].tType);
+        lat = trees[_exifSHA].lat;
+        long = trees[_exifSHA].long;
+        return (curator, hippie, exifSHA, rejectedReason, tStatus, tType, lat, long);
+    }
 }
