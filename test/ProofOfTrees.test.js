@@ -20,7 +20,7 @@ contract("ProofOfTrees", function (accounts) {
   let instance;
 
   beforeEach(async () => {
-    instance = await ProofOfTrees.new(10);
+    instance = await ProofOfTrees.new();
   });
 
   describe("Variables", () => {
@@ -40,11 +40,11 @@ contract("ProofOfTrees", function (accounts) {
       );
     });
 
-    it("should have a lastCurator", async () => {
+    it("should have a thisCurator", async () => {
       assert.equal(
-        typeof instance.lastCurator,
+        typeof instance.thisCurator,
         "function",
-        "Contract has no lastCurator"
+        "Contract has no thisCurator"
       );
     });
 
@@ -125,116 +125,156 @@ contract("ProofOfTrees", function (accounts) {
     });
 
     describe("Tree Struct", () => {
-      let subjectStruct;
+      let treeStruct;
 
       before(() => {
-        subjectStruct = TreeStruct(ProofOfTrees);
+        treeStruct = TreeStruct(ProofOfTrees);
         assert(
-          subjectStruct !== null,
+          treeStruct !== null,
           "The contract should define an `Tree Struct`"
         );
       });
 
       it("should have an `exifSHA`", () => {
         assert(
-          isDefined(subjectStruct)("exifSHA"),
+          isDefined(treeStruct)("exifSHA"),
           "Tree Struct should have an `exifSHA` member"
         );
         assert(
-          isType(subjectStruct)("exifSHA")("string"),
+          isType(treeStruct)("exifSHA")("string"),
           "`exifSHA` should be of type `string`"
         );
       });
 
       it("should have a `rejectedReason`", () => {
         assert(
-          isDefined(subjectStruct)("rejectedReason"),
+          isDefined(treeStruct)("rejectedReason"),
           "Tree Struct should have an `rejectedReason` member"
         );
         assert(
-          isType(subjectStruct)("rejectedReason")("string"),
+          isType(treeStruct)("rejectedReason")("string"),
           "`rejectedReason` should be of type `string`"
         );
       });
 
       it("should have a `lat`", () => {
         assert(
-          isDefined(subjectStruct)("lat"),
+          isDefined(treeStruct)("lat"),
           "Tree Struct should have a `lat` member"
         );
         assert(
-          isType(subjectStruct)("lat")("int256"),
+          isType(treeStruct)("lat")("int256"),
           "`lat` should be of type `int256`"
         );
       });
 
       it("should have a `long`", () => {
         assert(
-          isDefined(subjectStruct)("long"),
+          isDefined(treeStruct)("long"),
           "Tree Struct should have a `long` member"
         );
         assert(
-          isType(subjectStruct)("long")("int256"),
+          isType(treeStruct)("long")("int256"),
           "`long` should be of type `int256`"
         );
       });
 
       it("should have a `tStatus`", () => {
         assert(
-          isDefined(subjectStruct)("tStatus"),
+          isDefined(treeStruct)("tStatus"),
           "Tree Struct should have a `tStatus` member"
         );
-        //   assert(
-        //     isType(subjectStruct)("tStatus")("TreeStatus"),
-        //     "`tStatus` should be of type `TreeStatus`"
-        //   );
+        // assert(
+        //   isType(treeStruct)("tStatus")("TreeStatus"),
+        //   "`tStatus` should be of type `TreeStatus`"
+        // );
       });
 
       it("should have a `tType`", () => {
         assert(
-          isDefined(subjectStruct)("tType"),
+          isDefined(treeStruct)("tType"),
           "Tree Struct should have a `tType` member"
         );
         //   assert(
-        //     isType(subjectStruct)("tType")("TreeType"),
+        //     isType(treeStruct)("tType")("TreeType"),
         //     "`tType` should be of type `TreeType`"
         //   );
       });
 
       it("should have a `curator`", () => {
         assert(
-          isDefined(subjectStruct)("curator"),
+          isDefined(treeStruct)("curator"),
           "Tree Struct should have a `curator` member"
         );
         assert(
-          isType(subjectStruct)("curator")("address"),
+          isType(treeStruct)("curator")("address"),
           "`curator` should be of type `address`"
         );
-        assert(
-          isPayable(subjectStruct)("curator"),
-          "`curator` should be payable"
-        );
+        assert(isPayable(treeStruct)("curator"), "`curator` should be payable");
       });
 
       it("should have a `hippie`", () => {
         assert(
-          isDefined(subjectStruct)("hippie"),
+          isDefined(treeStruct)("hippie"),
           "Tree Struct should have a `hippie` member"
         );
         assert(
-          isType(subjectStruct)("hippie")("address"),
+          isType(treeStruct)("hippie")("address"),
           "`hippie` should be of type `address`"
         );
-        assert(
-          isPayable(subjectStruct)("hippie"),
-          "`hippie` should be payable"
-        );
+        assert(isPayable(treeStruct)("hippie"), "`hippie` should be payable");
       });
     });
   });
 
   describe("Use cases", () => {
-    it("should add a tree with exifSHA, type, and coordinates", async () => {
+    it("should give the creator a token and mint only one", async () => {
+      let balance = await instance.balanceOf(accounts[0]);
+      balance = web3.utils.fromWei(balance, "ether");
+
+      let totalSupply = await instance.totalSupply();
+      totalSupply = web3.utils.fromWei(totalSupply, "ether");
+
+      console.log(totalSupply);
+      assert.equal(
+        balance,
+        "1",
+        "Contract creator should get a token upon creation"
+      );
+      assert.equal(totalSupply, "1", "There should only be one token");
+    });
+
+    it("should be able to transfer between accounts", async () => {
+      let amount = web3.utils.toWei("1", "ether");
+      await instance.transfer(accounts[1], amount, { from: accounts[0] });
+
+      let aliceBalance = await instance.balanceOf(accounts[1]);
+      aliceBalance = web3.utils.fromWei(aliceBalance, "ether");
+      let ownerBalance = await instance.balanceOf(accounts[0]);
+      ownerBalance = web3.utils.fromWei(ownerBalance, "ether");
+      assert.equal(aliceBalance, "1", "Alice should now own a token");
+      assert.equal(ownerBalance, "0", "The Owner should now own zero tokens");
+    });
+
+    it("should allow someone to become a curator", async () => {
+      const tx = await instance.becomeCurator({ from: accounts[1] });
+      let eventEmitted = false;
+
+      if (tx.logs[0].event == "LogCuratorAdded") {
+        eventEmitted = true;
+      }
+
+      assert.equal(
+        eventEmitted,
+        true,
+        "adding a curator should emit a Curator Added Event"
+      );
+
+      let curators = await instance.fetchCurators();
+      assert.equal(curators[2], accounts[1], "Alice should now be a curator");
+    });
+
+    it("should add a tree with exifSHA and other struct variables", async () => {
       await instance.createTree(exifSHA, 0, lat, long, { from: alice });
 
       const result = await instance.fetchTree.call(exifSHA);
@@ -256,7 +296,7 @@ contract("ProofOfTrees", function (accounts) {
       );
       assert.equal(
         result[3],
-        '',
+        "",
         "the rejectedReason of the last created tree item does not match the expected value"
       );
       assert.equal(
@@ -281,6 +321,21 @@ contract("ProofOfTrees", function (accounts) {
       );
     });
 
-    
+    it("should emit a LogPending event when a tree is created", async () => {
+      let eventEmitted = false;
+      const tx = await instance.createTree(exifSHA, 0, lat, long, {
+        from: alice,
+      });
+
+      if (tx.logs[0].event == "LogPending") {
+        eventEmitted = true;
+      }
+
+      assert.equal(
+        eventEmitted,
+        true,
+        "creating a tree should log a pending event"
+      );
+    });
   });
 });

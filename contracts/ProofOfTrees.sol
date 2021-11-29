@@ -4,15 +4,16 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract ProofOfTrees is ERC20{
+
     address public owner;
     uint256 public treeCount;
-    uint256 public lastCurator;
+    uint256 public thisCurator;
 
     //map of unique EXIF hash to determined tree data
     mapping(string => Tree) public trees;
-    //map of addresses for curators (true) and former curators (false)
-    // mapping(address => bool) public curators;
-    address[] curators;
+
+    mapping (address => uint) curatorIndex;
+    address[] public curators;
 
     /*
     Status goes
@@ -39,16 +40,14 @@ contract ProofOfTrees is ERC20{
         string rejectedReason;
         TreeStatus tStatus;
         TreeType tType;
-        uint256 lat; //latitude
-        uint256 long; //longitude
+        int256 lat; //latitude
+        int256 long; //longitude
     }
 
     /*
      * Events
      */
 
-    // <LogApproved event: string exifSHA>
-    event LogApproved(string exifSHA);
 
     // <LogPaid event: string exifSHA>
     event LogPaid(string exifSHA);
@@ -59,8 +58,11 @@ contract ProofOfTrees is ERC20{
     // <LogSubmitted event: string exifSHA>
     event LogSubmitted(string exifSHA);
 
-    // <LogUnderReview event: string exifSHA>
-    event LogUnderReview(string exifSHA);
+    // <LogPending event: string exifSHA>
+    event LogPending(string exifSHA);
+
+    // <LogCuratorAdded event: address curator>
+    event LogCuratorAdded(address curator);
 
     /*
      * Modifiers
@@ -82,6 +84,14 @@ contract ProofOfTrees is ERC20{
         require(
             msg.sender == trees[_exifSHA].curator,
             "Only the tree's Curator can call this function."
+        );
+        _;
+    }
+
+    modifier multipleCurators() {
+        require(
+            curators.length > 1,
+            "There are not any curators to review this tree submission"
         );
         _;
     }
@@ -120,11 +130,22 @@ contract ProofOfTrees is ERC20{
         _;
     }
 
-    constructor(uint256 _initialSupply) ERC20("Tree proof", "TREE") {
-        _mint (msg.sender, _initialSupply * (1000 ** decimals()));
+    modifier validTreeType(uint8 _tType) {
+        require(
+            uint(TreeType.Evergreen) >= _tType, 
+            "this tree type is not valid"   
+        );
+        _;
+    }
+
+    constructor() ERC20("Tree proof", "TREE") {
+        _mint (msg.sender, 10 ** decimals());
         owner = msg.sender;
-        curators.push(msg.sender);
         treeCount = 0;
+        // We will use position 0 to flag invalid address
+        curators.push(address(address(0x0)));
+        becomeCurator();
+        thisCurator = 1;
     }
 
     /*
@@ -140,18 +161,27 @@ contract ProofOfTrees is ERC20{
     }
 
     function incrementCurator() private {
-        lastCurator++;
+        //since position 0 is invalid address, just use the length 
+        if (thisCurator == curators.length) {
+            thisCurator = 1;
+        } else {
+            thisCurator++;
+        }
     }
 
     function createTree(
         string memory _exifSHA,
         uint8 _tType,
-        uint256 _lat,
-        uint256 _long
-    ) public {
-          require(uint(TreeType.Evergreen) >= _tType);
+        int256 _lat,
+        int256 _long
+    ) public multipleCurators() validTreeType(_tType) {
+
+            //do not let the sender be the curator
+            if (getCuratorPosition(thisCurator) == msg.sender) {
+                incrementCurator();
+            }
             trees[_exifSHA] = Tree({
-                curator: payable(curators[lastCurator]),
+                curator: payable(getCuratorPosition(thisCurator)),
                 //might want a way to validate that the hippie is also not the curator for this tree
                 hippie: payable(msg.sender),
                 exifSHA: _exifSHA,
@@ -162,6 +192,7 @@ contract ProofOfTrees is ERC20{
                 long: _long
             });
            incrementCurator();
+           emit LogPending(_exifSHA);
     }
 
     function submit(string memory _exifSHA) public isHippie(_exifSHA) {
@@ -182,7 +213,29 @@ contract ProofOfTrees is ERC20{
         //TODO: come up with some arbitrary way to give token (make something in constructor)
     }
 
+    function becomeCurator() public {
+        if (!curatorInArray(msg.sender)) {
+            // Append
+            curatorIndex[msg.sender] = curators.length;
+            curators.push(msg.sender);
+            emit LogCuratorAdded(msg.sender);
+        }
+    }
 
+    function curatorInArray(address curator) public view returns (bool) {
+        // address address(address(0x0)) is not valid if pos is 0 is not in the array
+        if (curator != address(address(0x0)) && curatorIndex[curator] > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    function getCuratorPosition(uint256 pos) public view returns (address) {
+        // Position 0 is not valid
+        require(pos > 0, "invalid position of zero"); 
+        return curators[pos];
+    }
+    
     function fetchTree(string memory _exifSHA)
         public
         view
@@ -193,8 +246,8 @@ contract ProofOfTrees is ERC20{
             string memory rejectedReason,
             uint8 tStatus,
             uint8 tType,
-            uint256 lat,
-            uint256 long
+            int256 lat,
+            int256 long
         )
     {
         curator = trees[_exifSHA].curator;
@@ -206,5 +259,10 @@ contract ProofOfTrees is ERC20{
         lat = trees[_exifSHA].lat;
         long = trees[_exifSHA].long;
         return (curator, hippie, exifSHA, rejectedReason, tStatus, tType, lat, long);
+    }
+
+
+    function fetchCurators() public view returns(address[] memory) {
+        return curators;
     }
 }
