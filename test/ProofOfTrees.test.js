@@ -179,6 +179,17 @@ contract("ProofOfTrees", function (accounts) {
         );
       });
 
+      it("should have a `valid`", () => {
+        assert(
+          isDefined(treeStruct)("valid"),
+          "Tree Struct should have a `valid` member"
+        );
+        assert(
+          isType(treeStruct)("valid")("bool"),
+          "`valid` should be of type `bool`"
+        );
+      });
+
       it("should have a `tStatus`", () => {
         assert(
           isDefined(treeStruct)("tStatus"),
@@ -317,6 +328,11 @@ contract("ProofOfTrees", function (accounts) {
         result[7].toString(10),
         long,
         "the long does not match the expected value"
+      );
+      assert.equal(
+        result[8].toString(10),
+        "true",
+        "the valid bool does not match the expected value"
       );
     });
 

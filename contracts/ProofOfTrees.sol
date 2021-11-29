@@ -40,6 +40,7 @@ contract ProofOfTrees is ERC20{
         TreeType tType;
         int256 lat; //latitude
         int256 long; //longitude
+        bool valid;
     }
 
     /*
@@ -111,6 +112,14 @@ contract ProofOfTrees is ERC20{
         _;
     }
 
+    modifier treeUnique(string memory _exifSHA) {
+        require(
+            !trees[_exifSHA].valid, 
+            "this tree sha already exists"   
+        );
+        _;
+    }
+
     modifier validTreeType(uint8 _tType) {
         require(
             uint(TreeType.Evergreen) >= _tType, 
@@ -155,7 +164,7 @@ contract ProofOfTrees is ERC20{
         uint8 _tType,
         int256 _lat,
         int256 _long
-    ) public multipleCurators() validTreeType(_tType) {
+    ) public multipleCurators() validTreeType(_tType) treeUnique(_exifSHA) {
 
         //do not let the sender be the curator
         if (getCuratorPosition(thisCurator) == msg.sender) {
@@ -170,7 +179,8 @@ contract ProofOfTrees is ERC20{
             tStatus: TreeStatus.Pending,
             tType: TreeType(_tType),
             lat: _lat,
-            long: _long
+            long: _long,
+            valid: true
         });
         incrementCurator();
         emit LogPending(_exifSHA);
@@ -228,7 +238,8 @@ contract ProofOfTrees is ERC20{
             uint8 tStatus,
             uint8 tType,
             int256 lat,
-            int256 long
+            int256 long,
+            bool valid
         )
     {
         curator = trees[_exifSHA].curator;
@@ -239,7 +250,8 @@ contract ProofOfTrees is ERC20{
         tType = uint8(trees[_exifSHA].tType);
         lat = trees[_exifSHA].lat;
         long = trees[_exifSHA].long;
-        return (curator, hippie, exifSHA, rejectedReason, tStatus, tType, lat, long);
+        valid = trees[_exifSHA].valid;
+        return (curator, hippie, exifSHA, rejectedReason, tStatus, tType, lat, long, valid);
     }
 
 
