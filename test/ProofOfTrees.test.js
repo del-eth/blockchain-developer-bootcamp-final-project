@@ -91,12 +91,12 @@ contract("ProofOfTrees", function (accounts) {
         );
       });
 
-      it("should define `Submitted`", () => {
-        assert(
-          enumTreeStatus.hasOwnProperty("Submitted"),
-          "The enum does not have a `Submitted` value"
-        );
-      });
+      //   it("should define `Submitted`", () => {
+      //     assert(
+      //       enumTreeStatus.hasOwnProperty("Submitted"),
+      //       "The enum does not have a `Submitted` value"
+      //     );
+      //   });
     });
 
     describe("enum TreeType", () => {
@@ -235,7 +235,6 @@ contract("ProofOfTrees", function (accounts) {
       let totalSupply = await instance.totalSupply();
       totalSupply = web3.utils.fromWei(totalSupply, "ether");
 
-      console.log(totalSupply);
       assert.equal(
         balance,
         "1",
@@ -257,7 +256,7 @@ contract("ProofOfTrees", function (accounts) {
     });
 
     it("should allow someone to become a curator", async () => {
-      const tx = await instance.becomeCurator({ from: accounts[1] });
+      const tx = await instance.becomeCurator({ from: alice });
       let eventEmitted = false;
 
       if (tx.logs[0].event == "LogCuratorAdded") {
@@ -292,12 +291,12 @@ contract("ProofOfTrees", function (accounts) {
       assert.equal(
         result[2],
         exifSHA,
-        "the exifSHA of the last created tree item does not match the expected value"
+        "the exifSHA of the last created tree does not match the expected value"
       );
       assert.equal(
         result[3],
         "",
-        "the rejectedReason of the last created tree item does not match the expected value"
+        "the rejectedReason of the last created tree does not match the expected value"
       );
       assert.equal(
         result[4].toString(10),
@@ -318,6 +317,84 @@ contract("ProofOfTrees", function (accounts) {
         result[7].toString(10),
         long,
         "the long does not match the expected value"
+      );
+    });
+
+    it("should be able to move a tree through the rejection curation process ", async () => {
+      await instance.createTree(exifSHA, 0, lat, long, { from: alice });
+      await instance.becomeCurator({ from: bob });
+
+      var result = await instance.fetchTree.call(exifSHA);
+
+      assert.equal(
+        result[4].toString(10),
+        ProofOfTrees.TreeStatus.Pending,
+        'the Status of the tree should be "Pending"'
+      );
+
+      const rejectionReason = "this is not even a tree";
+      await instance.reject(exifSHA, rejectionReason, { from: _owner });
+      result = await instance.fetchTree.call(exifSHA);
+
+      assert.equal(
+        result[4].toString(10),
+        ProofOfTrees.TreeStatus.Rejected,
+        'the Status of the tree should be "Rejected"'
+      );
+      assert.equal(
+        result[3],
+        rejectionReason,
+        "the rejectedReason of tree does not match the expected value"
+      );
+    });
+
+    it("should be able to move a tree through the paid curation process ", async () => {
+      await instance.createTree(exifSHA, 0, lat, long, { from: alice });
+      await instance.becomeCurator({ from: bob });
+
+      var result = await instance.fetchTree.call(exifSHA);
+
+      var aliceBalance = await instance.balanceOf(alice);
+      aliceBalance = web3.utils.fromWei(aliceBalance, "ether");
+
+      assert.equal(aliceBalance, "0", "Alice should have no tokens, yet");
+
+      assert.equal(
+        result[4].toString(10),
+        ProofOfTrees.TreeStatus.Pending,
+        'the Status of the tree should be "Pending"'
+      );
+
+      let eventEmitted = false;
+      const payTx = await instance.pay(exifSHA, { from: _owner });
+      result = await instance.fetchTree.call(exifSHA);
+
+      payTx.logs.forEach(function (log) {
+        if (log.event && log.event == "LogPaid") {
+          eventEmitted = true;
+        }
+      });
+
+      assert.equal(
+        eventEmitted,
+        true,
+        "paying a tree/hippie should log a paid event"
+      );
+
+      aliceBalance = await instance.balanceOf(alice);
+      aliceBalance = web3.utils.fromWei(aliceBalance, "ether");
+
+      assert.equal(aliceBalance, "1", "Alice should have a token");
+
+      assert.equal(
+        result[4].toString(10),
+        ProofOfTrees.TreeStatus.Paid,
+        'the Status of the tree should be "Paid"'
+      );
+      assert.equal(
+        result[3],
+        "",
+        "the rejectedReason of tree does not match the expected value"
       );
     });
 

@@ -18,14 +18,12 @@ contract ProofOfTrees is ERC20{
     /*
     Status goes
     1) Pending (default upon creation)
-    2) Submitted (assign to a curator)
-    3) Rejected -or- Paid
+    2) Rejected -or- Paid
     */
     enum TreeStatus {
         Paid,
         Pending,
-        Rejected,
-        Submitted
+        Rejected
     }
 
     enum TreeType {
@@ -54,9 +52,6 @@ contract ProofOfTrees is ERC20{
 
     // <LogRejected event: string exifSHA>
     event LogRejected(string exifSHA);
-
-    // <LogSubmitted event: string exifSHA>
-    event LogSubmitted(string exifSHA);
 
     // <LogPending event: string exifSHA>
     event LogPending(string exifSHA);
@@ -115,20 +110,6 @@ contract ProofOfTrees is ERC20{
         );
         _;
     }
-    modifier rejected(string memory _exifSHA) {
-        require(
-            trees[_exifSHA].tStatus == TreeStatus.Rejected,
-            "This tree is not Rejected."
-        );
-        _;
-    }
-    modifier submitted(string memory _exifSHA) {
-        require(
-            trees[_exifSHA].tStatus == TreeStatus.Submitted,
-            "This tree is not Submitted."
-        );
-        _;
-    }
 
     modifier validTreeType(uint8 _tType) {
         require(
@@ -176,41 +157,41 @@ contract ProofOfTrees is ERC20{
         int256 _long
     ) public multipleCurators() validTreeType(_tType) {
 
-            //do not let the sender be the curator
-            if (getCuratorPosition(thisCurator) == msg.sender) {
-                incrementCurator();
-            }
-            trees[_exifSHA] = Tree({
-                curator: payable(getCuratorPosition(thisCurator)),
-                //might want a way to validate that the hippie is also not the curator for this tree
-                hippie: payable(msg.sender),
-                exifSHA: _exifSHA,
-                rejectedReason: '',
-                tStatus: TreeStatus.Pending,
-                tType: TreeType(_tType),
-                lat: _lat,
-                long: _long
-            });
-           incrementCurator();
-           emit LogPending(_exifSHA);
-    }
-
-    function submit(string memory _exifSHA) public isHippie(_exifSHA) {
-        trees[_exifSHA].tStatus = TreeStatus.Submitted;
-        emit LogSubmitted(_exifSHA);
+        //do not let the sender be the curator
+        if (getCuratorPosition(thisCurator) == msg.sender) {
+            incrementCurator();
+        }
+        trees[_exifSHA] = Tree({
+            curator: payable(getCuratorPosition(thisCurator)),
+            //might want a way to validate that the hippie is also not the curator for this tree
+            hippie: payable(msg.sender),
+            exifSHA: _exifSHA,
+            rejectedReason: '',
+            tStatus: TreeStatus.Pending,
+            tType: TreeType(_tType),
+            lat: _lat,
+            long: _long
+        });
+        incrementCurator();
+        emit LogPending(_exifSHA);
     }
 
     function reject(string memory _exifSHA, string memory _rejectReason)
         public
         isCurator(_exifSHA)
+        pending(_exifSHA)
     {
         trees[_exifSHA].tStatus = TreeStatus.Rejected;
         trees[_exifSHA].rejectedReason = _rejectReason;
         emit LogRejected(_exifSHA);
     }
 
-    function pay(string memory _exifSHA) public isCurator(_exifSHA) {
-        //TODO: come up with some arbitrary way to give token (make something in constructor)
+    function pay(string memory _exifSHA) public isCurator(_exifSHA) pending(_exifSHA) {
+        trees[_exifSHA].tStatus = TreeStatus.Paid;
+        _mint (trees[_exifSHA].hippie, 10 ** decimals());
+
+        emit LogPaid(_exifSHA);
+
     }
 
     function becomeCurator() public {
@@ -231,7 +212,7 @@ contract ProofOfTrees is ERC20{
     }
 
     function getCuratorPosition(uint256 pos) public view returns (address) {
-        // Position 0 is not valid
+        // Position 0 is always an invalid address
         require(pos > 0, "invalid position of zero"); 
         return curators[pos];
     }
