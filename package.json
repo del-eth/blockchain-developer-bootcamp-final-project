@@ -1,0 +1,32 @@
+{
+  "name": "blockchain-developer-bootcamp-final-project",
+  "version": "1.0.0",
+  "description": "Proof of Trees Project",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/del-eth/blockchain-developer-bootcamp-final-project.git"
+  },
+  "author": "del.eth",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/del-eth/blockchain-developer-bootcamp-final-project/issues"
+  },
+  "homepage": "https://github.com/del-eth/blockchain-developer-bootcamp-final-project#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "4.4.0",
+    "ganache-cli": "6.12.2",
+    "web3": "0.20.7"
+  },
+  "devDependencies": {
+    "lite-server": "2.6.1",
+    "prettier": "2.5.0",
+    "prettier-plugin-solidity": "1.0.0-beta.19"
+  }
+}

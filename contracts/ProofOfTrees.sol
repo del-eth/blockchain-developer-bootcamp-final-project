@@ -128,7 +128,7 @@ contract ProofOfTrees is ERC20{
         _;
     }
 
-    constructor() ERC20("Tree proof", "TREE") {
+    constructor() ERC20("Tree Proof", "TREE") {
         _mint (msg.sender, 10 ** decimals());
         owner = msg.sender;
         treeCount = 0;
