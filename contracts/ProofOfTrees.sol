@@ -1,24 +1,32 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+/// @title Proof of Trees
+/// @author del.eth
+/// @notice This contract is for demonstration purposes!
+/// @dev All function calls are implemented with explicit access
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract ProofOfTrees is ERC20{
 
+
     address public owner;
+
+    /// @dev track total number of trees
     uint256 public treeCount;
+    /// @dev track curator to use when creating a tree
     uint256 public thisCurator;
 
-    //map of unique EXIF hash to determined tree data
+    /// @dev mapping of unique EXIF hashes (unique identifier) to determined tree data
     mapping(string => Tree) public trees;
 
+    /// @dev create a unique set of curators and their index. See https://ethereum.stackexchange.com/a/30481 for inspiration
     mapping (address => uint) curatorIndex;
     address[] public curators;
 
-    /*
-    Status goes
-    1) Pending (default upon creation)
-    2) Rejected -or- Paid
+    /**
+    /// @notice 
+    Status goes 1) Pending (default upon creation) 2) Rejected -or- Paid (based on curator decision)
     */
     enum TreeStatus {
         Paid,
@@ -26,11 +34,25 @@ contract ProofOfTrees is ERC20{
         Rejected
     }
 
+    /// @notice only track two types of tress for now
     enum TreeType {
         Disiduous,
         Evergreen
     }
 
+    /** 
+    * @notice Tree structure has:
+    * - the hippie who found it
+    * - the curator assigned with reviewing it, the unique 
+    * - the unique exifSHA (ideally we'd rely on an some DAO-approved service to hash this information before giving it to the contract)
+    * - the rejected reason, if applicable
+    * - the status for the curation process
+    * - the type of tree
+    * - the latitude
+    * - the longitude 
+    * - the valid flag - this is used internally
+     @dev the valid flag is used to address whether the tree has been created by the createTree function
+    */ 
     struct Tree {
         address payable curator;
         address payable hippie;
@@ -48,16 +70,20 @@ contract ProofOfTrees is ERC20{
      */
 
 
-    // <LogPaid event: string exifSHA>
+    /// @dev log that a tree has been paid (approved by a curator)
+    /// @param exifSHA, the id for tree Paid
     event LogPaid(string exifSHA);
 
-    // <LogRejected event: string exifSHA>
+    /// @dev log that a tree has been rejected by a curator
+    /// @param exifSHA, the id for tree Rejected
     event LogRejected(string exifSHA);
 
-    // <LogPending event: string exifSHA>
+    /// @dev log that a tree has been put in the Pending curation state (submitted/created by a Hippie)
+    /// @param exifSHA, the id for tree Pending 
     event LogPending(string exifSHA);
 
-    // <LogCuratorAdded event: address curator>
+    /// @dev log that a curator has been added to the list of curators
+    /// @param curator, the ethereum public account of the curator
     event LogCuratorAdded(address curator);
 
     /*
@@ -128,7 +154,7 @@ contract ProofOfTrees is ERC20{
         _;
     }
 
-    constructor() ERC20("Tree Proof", "TREE") {
+    constructor() ERC20("Proof of Trees", "TREE") {
         _mint (msg.sender, 10 ** decimals());
         owner = msg.sender;
         treeCount = 0;
