@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
 /// @title Proof of Trees
 /// @author del.eth
 /// @notice This contract is for demonstration purposes!
 /// @dev All function calls are implemented with explicit access
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-
 contract ProofOfTrees is ERC20 {
     address public owner;
 

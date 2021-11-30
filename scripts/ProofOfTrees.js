@@ -137,6 +137,7 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [
@@ -180,6 +181,7 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [
@@ -199,6 +201,7 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [],
@@ -212,6 +215,7 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [
@@ -273,6 +277,7 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [],
@@ -286,6 +291,7 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [],
@@ -299,6 +305,7 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [],
@@ -312,6 +319,7 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [],
@@ -325,6 +333,7 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [
@@ -391,6 +400,7 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [
@@ -450,6 +460,7 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [
@@ -535,6 +546,7 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [
@@ -554,6 +566,7 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [
@@ -613,6 +626,7 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [],
@@ -626,8 +640,9 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
+    constant: true,
   },
 ]);
 
-var ProofOfTree = treesWeb3.at("0xa833A0b8e76BD3f7E0280268e6245047e978ACC7");
+var ProofOfTree = treesWeb3.at("0x8ddF13e2cd8bDcba070c2A8B9982C24ecEd666Eb");
 console.log(ProofOfTree);

@@ -22,9 +22,11 @@
   "dependencies": {
     "@openzeppelin/contracts": "4.4.0",
     "ganache-cli": "6.12.2",
+    "truffle-hdwallet-provider": "1.0.17",
     "web3": "0.20.7"
   },
   "devDependencies": {
+    "@truffle/hdwallet-provider": "1.7.0",
     "browserify": "17.0.0",
     "lite-server": "2.6.1",
     "prettier": "2.5.0",
