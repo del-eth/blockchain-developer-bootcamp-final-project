@@ -3,7 +3,6 @@
     <title>Proof of Tres</title>
   </head>
   <body>
-    <script src="./node_modules/web3/dist/web3.min.js"></script>
     <div class="container">
       <h1>Proof of Trees</h1>
       <span id="countIns"></span>
@@ -27,9 +26,12 @@
       type="text/javascript"
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"
     ></script>
+    <script
+      type="text/javascript"
+      src="./node_modules/web3/dist/web3.min.js"
+    ></script>
 
     <script type="module">
-      Web3 = require("web3");
       if (typeof web3 !== "undefined") {
         Web3 = new Web3(web3.currentProvider);
       } else {
