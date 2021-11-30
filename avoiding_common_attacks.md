@@ -1,3 +1,3 @@
-SWC-107
-SWC-102
-SWC-100
+SWC-107: Reentrancy
+SWC-102:
+SWC-100:
