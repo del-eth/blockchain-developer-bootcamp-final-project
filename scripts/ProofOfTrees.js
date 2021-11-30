@@ -1,7 +1,7 @@
 if (typeof web3 !== "undefined") {
   Web3 = new Web3(web3.currentProvider);
 } else {
-  Web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8545"));
+  Web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
 }
 
 // window.ethereum
