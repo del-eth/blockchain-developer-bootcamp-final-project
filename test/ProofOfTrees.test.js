@@ -40,11 +40,11 @@ contract("ProofOfTrees", function (accounts) {
       );
     });
 
-    it("should have a thisCurator", async () => {
+    it("should have a nextCurator", async () => {
       assert.equal(
-        typeof instance.thisCurator,
+        typeof instance.nextCurator,
         "function",
-        "Contract has no thisCurator"
+        "Contract has no nextCurator"
       );
     });
 

@@ -7,21 +7,19 @@ pragma solidity ^0.8.0;
 /// @dev All function calls are implemented with explicit access
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract ProofOfTrees is ERC20{
-
-
+contract ProofOfTrees is ERC20 {
     address public owner;
 
     /// @dev track total number of trees
     uint256 public treeCount;
     /// @dev track curator to use when creating a tree
-    uint256 public thisCurator;
+    uint256 public nextCurator;
 
     /// @dev mapping of unique EXIF hashes (unique identifier) to determined tree data
     mapping(string => Tree) public trees;
 
     /// @dev create a unique set of curators and their index. See https://ethereum.stackexchange.com/a/30481 for inspiration
-    mapping (address => uint) curatorIndex;
+    mapping(address => uint256) curatorIndex;
     address[] public curators;
 
     /**
@@ -52,7 +50,7 @@ contract ProofOfTrees is ERC20{
     * - the longitude 
     * - the valid flag - this is used internally
      @dev the valid flag is used to address whether the tree has been created by the createTree function
-    */ 
+    */
     struct Tree {
         address payable curator;
         address payable hippie;
@@ -69,7 +67,6 @@ contract ProofOfTrees is ERC20{
      * Events
      */
 
-
     /// @dev log that a tree has been paid (approved by a curator)
     /// @param exifSHA, the id for tree Paid
     event LogPaid(string exifSHA);
@@ -79,7 +76,7 @@ contract ProofOfTrees is ERC20{
     event LogRejected(string exifSHA);
 
     /// @dev log that a tree has been put in the Pending curation state (submitted/created by a Hippie)
-    /// @param exifSHA, the id for tree Pending 
+    /// @param exifSHA, the id for tree Pending
     event LogPending(string exifSHA);
 
     /// @dev log that a curator has been added to the list of curators
@@ -139,29 +136,26 @@ contract ProofOfTrees is ERC20{
     }
 
     modifier treeUnique(string memory _exifSHA) {
-        require(
-            !trees[_exifSHA].valid, 
-            "this tree sha already exists"   
-        );
+        require(!trees[_exifSHA].valid, "this tree sha already exists");
         _;
     }
 
     modifier validTreeType(uint8 _tType) {
         require(
-            uint(TreeType.Evergreen) >= _tType, 
-            "this tree type is not valid"   
+            uint256(TreeType.Evergreen) >= _tType,
+            "this tree type is not valid"
         );
         _;
     }
 
     constructor() ERC20("Proof of Trees", "TREE") {
-        _mint (msg.sender, 10 ** decimals());
+        _mint(msg.sender, 10**decimals());
         owner = msg.sender;
         treeCount = 0;
         // We will use position 0 to flag invalid address
         curators.push(address(address(0x0)));
         becomeCurator();
-        thisCurator = 1;
+        nextCurator = 1;
     }
 
     /*
@@ -177,31 +171,46 @@ contract ProofOfTrees is ERC20{
     }
 
     function incrementCurator() private {
-        //since position 0 is invalid address, just use the length 
-        if (thisCurator == curators.length) {
-            thisCurator = 1;
+        //since position 0 is invalid address, just use the length
+        if (nextCurator == curators.length) {
+            nextCurator = 1;
         } else {
-            thisCurator++;
+            nextCurator++;
         }
     }
 
+    /**
+        @notice this function creates a tree
+        @dev the contract must have some curators who are not the hippie submitting the image
+        - we prevent SWC-107: Reentrancy by requiring that the curator is not the hippie even after incrementing to round-robin curators
+        - exifSHA is validated as unique and tree type must be valid
+        @param _exifSHA the unique sha of the EXIF data from the image used to identify the tree
+        @param _tType the type of tree (0 = Disiduous, 1 = Evergreen)
+        @param _lat the latitude of the tree
+        @param _long the longitude of the tree
+    */
     function createTree(
         string memory _exifSHA,
         uint8 _tType,
         int256 _lat,
         int256 _long
-    ) public multipleCurators() validTreeType(_tType) treeUnique(_exifSHA) {
-
-        //do not let the sender be the curator
-        if (getCuratorPosition(thisCurator) == msg.sender) {
+    ) public multipleCurators validTreeType(_tType) treeUnique(_exifSHA) {
+        //do not let the sender be the curator, pick the next curator
+        if (getCuratorAtPosition(nextCurator) == msg.sender) {
             incrementCurator();
         }
+        //some gas optimization avoiding an extra call upon Tree instantiation
+        address _curator = getCuratorAtPosition(nextCurator);
+        //if the curator is still the sender, that means they're the only curator
+        require(
+            _curator != msg.sender,
+            "there are not enough curators to process tree submissions"
+        );
         trees[_exifSHA] = Tree({
-            curator: payable(getCuratorPosition(thisCurator)),
-            //might want a way to validate that the hippie is also not the curator for this tree
+            curator: payable(_curator),
             hippie: payable(msg.sender),
             exifSHA: _exifSHA,
-            rejectedReason: '',
+            rejectedReason: "",
             tStatus: TreeStatus.Pending,
             tType: TreeType(_tType),
             lat: _lat,
@@ -212,6 +221,12 @@ contract ProofOfTrees is ERC20{
         emit LogPending(_exifSHA);
     }
 
+    /**
+        @notice this function allows a curator to reject a tree
+        @dev must be a curator assigned to the tree and the tree must be in a pending state
+        @param _exifSHA unique identifier of the tree
+        @param _rejectReason arbitraty reason the tree was rejected by the curator
+    */
     function reject(string memory _exifSHA, string memory _rejectReason)
         public
         isCurator(_exifSHA)
@@ -222,37 +237,66 @@ contract ProofOfTrees is ERC20{
         emit LogRejected(_exifSHA);
     }
 
-    function pay(string memory _exifSHA) public isCurator(_exifSHA) pending(_exifSHA) {
+    /**
+        @notice this function allows a curator to pay out TREE tokens for a Hippie's tree
+        @dev must be a curator assigned to the tree and the tree must be in a pending state
+        @param _exifSHA unique identifier of the tree
+    */
+    function pay(string memory _exifSHA)
+        public
+        isCurator(_exifSHA)
+        pending(_exifSHA)
+    {
         trees[_exifSHA].tStatus = TreeStatus.Paid;
-        _mint (trees[_exifSHA].hippie, 10 ** decimals());
+        _mint(trees[_exifSHA].hippie, 10**decimals());
 
         emit LogPaid(_exifSHA);
-
     }
 
+    /**
+        @notice this function currently allows anyone to become a curator
+        @dev this appends a curator to the list if they are not already a curator
+    */
     function becomeCurator() public {
-        if (!curatorInArray(msg.sender)) {
-            // Append
-            curatorIndex[msg.sender] = curators.length;
-            curators.push(msg.sender);
-            emit LogCuratorAdded(msg.sender);
-        }
+        require(!curatorInArray(msg.sender), "you are already a curator!");
+        curatorIndex[msg.sender] = curators.length;
+        curators.push(msg.sender);
+        emit LogCuratorAdded(msg.sender);
     }
 
+    /**
+        @notice answers true if curator address has been added to list of curators
+        @dev returns true if address is in curatorIndex
+        @param curator address to check if curator
+        @return true if address is a curator
+    */
     function curatorInArray(address curator) public view returns (bool) {
-        // address address(address(0x0)) is not valid if pos is 0 is not in the array
+        // address address(address(0x0)) is not valid if position is 0 is not in the array
         if (curator != address(address(0x0)) && curatorIndex[curator] > 0) {
             return true;
         }
         return false;
     }
 
-    function getCuratorPosition(uint256 pos) public view returns (address) {
+    /**
+        @dev gets curator address at a known positionin curators array
+        @param position position in the index
+        @return address of the curator at known position
+    */
+    function getCuratorAtPosition(uint256 position)
+        public
+        view
+        returns (address)
+    {
         // Position 0 is always an invalid address
-        require(pos > 0, "invalid position of zero"); 
-        return curators[pos];
+        require(position > 0, "invalid position of zero");
+        return curators[position];
     }
-    
+
+    /**
+        @dev use this for testing or for finding information about a particular tree
+        @param _exifSHA unique identifier of a tree
+    */
     function fetchTree(string memory _exifSHA)
         public
         view
@@ -277,11 +321,25 @@ contract ProofOfTrees is ERC20{
         lat = trees[_exifSHA].lat;
         long = trees[_exifSHA].long;
         valid = trees[_exifSHA].valid;
-        return (curator, hippie, exifSHA, rejectedReason, tStatus, tType, lat, long, valid);
+        return (
+            curator,
+            hippie,
+            exifSHA,
+            rejectedReason,
+            tStatus,
+            tType,
+            lat,
+            long,
+            valid
+        );
     }
 
-
-    function fetchCurators() public view returns(address[] memory) {
+    /**
+        @notice gives the array of curators
+        @dev use this for testing or for all curators
+        @return address[] array of curators
+    */
+    function fetchCurators() public view returns (address[] memory) {
         return curators;
     }
 }
