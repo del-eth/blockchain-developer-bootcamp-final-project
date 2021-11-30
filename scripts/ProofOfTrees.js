@@ -7,7 +7,11 @@ if (typeof web3 !== "undefined") {
 // window.ethereum
 const accounts = await ethereum.request({ method: "eth_accounts" });
 const treesWeb3 = Web3.eth.contract([
-  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
+  {
+    inputs: [],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
   {
     anonymous: false,
     inputs: [
@@ -112,48 +116,110 @@ const treesWeb3 = Web3.eth.contract([
   },
   {
     inputs: [
-      { internalType: "address", name: "owner", type: "address" },
-      { internalType: "address", name: "spender", type: "address" },
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "spender",
+        type: "address",
+      },
     ],
     name: "allowance",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      { internalType: "address", name: "spender", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
+      {
+        internalType: "address",
+        name: "spender",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
     ],
     name: "approve",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [{ internalType: "address", name: "account", type: "address" }],
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
     name: "balanceOf",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     name: "curators",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "decimals",
-    outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      { internalType: "address", name: "spender", type: "address" },
+      {
+        internalType: "address",
+        name: "spender",
+        type: "address",
+      },
       {
         internalType: "uint256",
         name: "subtractedValue",
@@ -161,85 +227,179 @@ const treesWeb3 = Web3.eth.contract([
       },
     ],
     name: "decreaseAllowance",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
-      { internalType: "address", name: "spender", type: "address" },
-      { internalType: "uint256", name: "addedValue", type: "uint256" },
+      {
+        internalType: "address",
+        name: "spender",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "addedValue",
+        type: "uint256",
+      },
     ],
     name: "increaseAllowance",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [],
     name: "name",
-    outputs: [{ internalType: "string", name: "", type: "string" }],
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "nextCurator",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "owner",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "symbol",
-    outputs: [{ internalType: "string", name: "", type: "string" }],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "thisCurator",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "totalSupply",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      { internalType: "address", name: "recipient", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
+      {
+        internalType: "address",
+        name: "recipient",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
     ],
     name: "transfer",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
-      { internalType: "address", name: "sender", type: "address" },
-      { internalType: "address", name: "recipient", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
+      {
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "recipient",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
     ],
     name: "transferFrom",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [],
     name: "treeCount",
-    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{ internalType: "string", name: "", type: "string" }],
+    inputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
     name: "trees",
     outputs: [
       {
@@ -252,8 +412,16 @@ const treesWeb3 = Web3.eth.contract([
         name: "hippie",
         type: "address",
       },
-      { internalType: "string", name: "exifSHA", type: "string" },
-      { internalType: "string", name: "rejectedReason", type: "string" },
+      {
+        internalType: "string",
+        name: "exifSHA",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "rejectedReason",
+        type: "string",
+      },
       {
         internalType: "enum ProofOfTrees.TreeStatus",
         name: "tStatus",
@@ -264,19 +432,47 @@ const treesWeb3 = Web3.eth.contract([
         name: "tType",
         type: "uint8",
       },
-      { internalType: "int256", name: "lat", type: "int256" },
-      { internalType: "int256", name: "long", type: "int256" },
-      { internalType: "bool", name: "valid", type: "bool" },
+      {
+        internalType: "int256",
+        name: "lat",
+        type: "int256",
+      },
+      {
+        internalType: "int256",
+        name: "long",
+        type: "int256",
+      },
+      {
+        internalType: "bool",
+        name: "valid",
+        type: "bool",
+      },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      { internalType: "string", name: "_exifSHA", type: "string" },
-      { internalType: "uint8", name: "_tType", type: "uint8" },
-      { internalType: "int256", name: "_lat", type: "int256" },
-      { internalType: "int256", name: "_long", type: "int256" },
+      {
+        internalType: "string",
+        name: "_exifSHA",
+        type: "string",
+      },
+      {
+        internalType: "uint8",
+        name: "_tType",
+        type: "uint8",
+      },
+      {
+        internalType: "int256",
+        name: "_lat",
+        type: "int256",
+      },
+      {
+        internalType: "int256",
+        name: "_long",
+        type: "int256",
+      },
     ],
     name: "createTree",
     outputs: [],
@@ -285,8 +481,16 @@ const treesWeb3 = Web3.eth.contract([
   },
   {
     inputs: [
-      { internalType: "string", name: "_exifSHA", type: "string" },
-      { internalType: "string", name: "_rejectReason", type: "string" },
+      {
+        internalType: "string",
+        name: "_exifSHA",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_rejectReason",
+        type: "string",
+      },
     ],
     name: "reject",
     outputs: [],
@@ -294,7 +498,13 @@ const treesWeb3 = Web3.eth.contract([
     type: "function",
   },
   {
-    inputs: [{ internalType: "string", name: "_exifSHA", type: "string" }],
+    inputs: [
+      {
+        internalType: "string",
+        name: "_exifSHA",
+        type: "string",
+      },
+    ],
     name: "pay",
     outputs: [],
     stateMutability: "nonpayable",
@@ -308,21 +518,51 @@ const treesWeb3 = Web3.eth.contract([
     type: "function",
   },
   {
-    inputs: [{ internalType: "address", name: "curator", type: "address" }],
+    inputs: [
+      {
+        internalType: "address",
+        name: "curator",
+        type: "address",
+      },
+    ],
     name: "curatorInArray",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{ internalType: "uint256", name: "pos", type: "uint256" }],
-    name: "getCuratorPosition",
-    outputs: [{ internalType: "address", name: "", type: "address" }],
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "position",
+        type: "uint256",
+      },
+    ],
+    name: "getCuratorAtPosition",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{ internalType: "string", name: "_exifSHA", type: "string" }],
+    inputs: [
+      {
+        internalType: "string",
+        name: "_exifSHA",
+        type: "string",
+      },
+    ],
     name: "fetchTree",
     outputs: [
       {
@@ -335,13 +575,41 @@ const treesWeb3 = Web3.eth.contract([
         name: "hippie",
         type: "address",
       },
-      { internalType: "string", name: "exifSHA", type: "string" },
-      { internalType: "string", name: "rejectedReason", type: "string" },
-      { internalType: "uint8", name: "tStatus", type: "uint8" },
-      { internalType: "uint8", name: "tType", type: "uint8" },
-      { internalType: "int256", name: "lat", type: "int256" },
-      { internalType: "int256", name: "long", type: "int256" },
-      { internalType: "bool", name: "valid", type: "bool" },
+      {
+        internalType: "string",
+        name: "exifSHA",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "rejectedReason",
+        type: "string",
+      },
+      {
+        internalType: "uint8",
+        name: "tStatus",
+        type: "uint8",
+      },
+      {
+        internalType: "uint8",
+        name: "tType",
+        type: "uint8",
+      },
+      {
+        internalType: "int256",
+        name: "lat",
+        type: "int256",
+      },
+      {
+        internalType: "int256",
+        name: "long",
+        type: "int256",
+      },
+      {
+        internalType: "bool",
+        name: "valid",
+        type: "bool",
+      },
     ],
     stateMutability: "view",
     type: "function",
@@ -349,7 +617,13 @@ const treesWeb3 = Web3.eth.contract([
   {
     inputs: [],
     name: "fetchCurators",
-    outputs: [{ internalType: "address[]", name: "", type: "address[]" }],
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
