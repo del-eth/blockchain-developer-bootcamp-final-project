@@ -33,15 +33,15 @@
 
     <script type="module">
       if (typeof web3 !== "undefined") {
-        web3 = new web3(web3.currentProvider);
+        Web3 = new Web3(web3.currentProvider);
       } else {
-        web3 = new web3(
-          new web3.providers.HttpProvider("http://127.0.0.1:8545")
+        Web3 = new Web3(
+          new Web3.providers.HttpProvider("http://127.0.0.1:8545")
         );
       }
 
-      web3.eth.defaultAccount = web3.eth.accounts[0];
-      const treesweb3 = web3.eth.contract([
+      Web3.eth.defaultAccount = Web3.eth.accounts[0];
+      const treesWeb3 = Web3.eth.contract([
         { inputs: [], stateMutability: "nonpayable", type: "constructor" },
         {
           anonymous: false,
@@ -398,7 +398,7 @@
         },
       ]);
 
-      var ProofOfTree = treesweb3.at(
+      var ProofOfTree = treesWeb3.at(
         "0xa833A0b8e76BD3f7E0280268e6245047e978ACC7"
       );
       console.log(ProofOfTree);
