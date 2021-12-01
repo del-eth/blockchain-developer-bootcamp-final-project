@@ -17,15 +17,11 @@ contract ProofOfTrees is ERC20 {
     mapping(string => Tree) public trees;
     /// @dev track trees in a simple array for ui purposes
     Tree[] public treeArray;
-    /// @dev track total number of trees
-    uint256 public treeCount;
 
     /// @dev create a unique set of curators and their index. See https://ethereum.stackexchange.com/a/30481 for inspiration
     mapping(address => uint256) curatorIndex;
     /// @dev track curators in a simple array to easily reference from their index and for ui purposes
     address[] public curators;
-    /// @dev track total number of curators
-    uint256 public curatorCount;
 
     /**
     /// @notice 
@@ -132,6 +128,7 @@ contract ProofOfTrees is ERC20 {
         );
         _;
     }
+
     modifier paid(string memory _exifSHA) {
         require(
             trees[_exifSHA].tStatus == TreeStatus.Paid,
@@ -161,8 +158,6 @@ contract ProofOfTrees is ERC20 {
     constructor() ERC20("Proof of Trees", "TREE") {
         _mint(msg.sender, 10**decimals());
         owner = msg.sender;
-        treeCount = 0;
-        curatorCount = 0;
         // We will use position 0 to flag invalid address
         curators.push(address(address(0x0)));
         becomeCurator();
@@ -223,8 +218,8 @@ contract ProofOfTrees is ERC20 {
             long: _long,
             valid: true
         });
+        treeArray.push(trees[_exifSHA]);
         incrementNextCurator();
-        treeCount++;
         emit LogPending(_exifSHA);
     }
 
@@ -268,7 +263,6 @@ contract ProofOfTrees is ERC20 {
         require(!curatorInArray(msg.sender), "you are already a curator!");
         curatorIndex[msg.sender] = curators.length;
         curators.push(msg.sender);
-        curatorCount++;
         emit LogCuratorAdded(msg.sender);
     }
 
@@ -349,5 +343,19 @@ contract ProofOfTrees is ERC20 {
     */
     function fetchCurators() public view returns (address[] memory) {
         return curators;
+    }
+
+    /**
+        @dev use this for getting total curators
+    */
+    function getCuratorCount() public view returns (uint256 count) {
+        return curators.length;
+    }
+
+    /**
+        @dev use this for getting total trees
+    */
+    function getTreesCount() public view returns (uint256 count) {
+        return treeArray.length;
     }
 }

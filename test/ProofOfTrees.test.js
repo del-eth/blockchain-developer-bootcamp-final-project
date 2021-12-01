@@ -31,14 +31,6 @@ contract("ProofOfTrees", function (accounts) {
       );
     });
 
-    it("should have a treeCount", async () => {
-      assert.equal(
-        typeof instance.treeCount,
-        "function",
-        "Contract has no treeCount"
-      );
-    });
-
     it("should have a nextCurator", async () => {
       assert.equal(
         typeof instance.nextCurator,

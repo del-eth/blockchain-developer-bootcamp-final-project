@@ -137,7 +137,6 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -181,21 +180,6 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
-  },
-  {
-    inputs: [],
-    name: "curatorCount",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -215,7 +199,6 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
@@ -229,7 +212,6 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -291,7 +273,6 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
@@ -305,7 +286,6 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
@@ -319,7 +299,6 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
@@ -333,7 +312,6 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
@@ -347,7 +325,6 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -460,21 +437,6 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
-  },
-  {
-    inputs: [],
-    name: "treeCount",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -534,7 +496,6 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -620,7 +581,6 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -640,7 +600,6 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [
@@ -700,7 +659,6 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
   },
   {
     inputs: [],
@@ -714,15 +672,45 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "view",
     type: "function",
-    constant: true,
+  },
+  {
+    inputs: [],
+    name: "getCuratorCount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getTreesCount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "count",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
 ]);
 
-var ProofOfTree = treesWeb3.at("0x8ddF13e2cd8bDcba070c2A8B9982C24ecEd666Eb");
+var ProofOfTree = treesWeb3.at("0xE2157201a5E7853f3F88DA05420f0bF572cC4958");
 console.log(ProofOfTree);
 var pendingEvent = ProofOfTree.LogPending();
-var curators = ProofOfTree.curators().call();
-console.log(curators);
+let curators = [];
+const curatorCount = await ProofOfTree.methods.getCuratorCount([]).call();
+for (var i = 1; i <= curatorCount; i++) {
+  const curator = await ProofOfTree.methods.curators(i).call();
+  console.log(curator);
+  curators.push(curator);
+}
 
 $("#curators").html(curators);
 pendingEvent.watch(function (error, result) {
@@ -748,6 +736,11 @@ $("#createTreeButton").click(function () {
     $("#exifSHACreate").val(),
     tree,
     $("#lat").val(),
-    $("#long").val()
+    $("#long").val(),
+    (err, res) => {
+      if (err) {
+        $("#loader").hide();
+      }
+    }
   );
 });
