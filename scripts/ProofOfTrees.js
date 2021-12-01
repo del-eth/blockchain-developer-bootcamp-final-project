@@ -728,6 +728,7 @@ const treesWeb3 = new Web3.eth.Contract(
   "0xE2157201a5E7853f3F88DA05420f0bF572cC4958",
   { from: account }
 );
+
 let curators = [];
 let trees = [];
 const curatorCount = await treesWeb3.methods.getCuratorCount().call();
@@ -784,22 +785,42 @@ $("#createTreeButton").click(function () {
       } else {
         $("#loader").hide();
         $("#hippieResult").html(
-          $("#exifSHACreate").val() + " has been created"
+          $("#exifSHACreate").val() + " is attempting to be created..."
         );
       }
+    })
+    .on("confirmation", function (confirmationNumber, receipt) {
+      if (confirmationNumber === 1) {
+        $("#hippieResult").html(
+          $("#exifSHACreate").val() + " has been created..."
+        );
+      }
+    })
+    .on("error", function (error) {
+      $("#hippieResult").html("error creating tree: " + error.message);
     });
 });
 $("#becomeCurator").click(function () {
   $("#loader").show();
-  treesWeb3.methods.becomeCurator().send(function (error, result) {
-    if (error) {
-      $("#loader").hide();
+  treesWeb3.methods
+    .becomeCurator()
+    .send(function (error, result) {
+      if (error) {
+        $("#loader").hide();
+        $("#curatorResult").html("error becoming a curator: " + error.message);
+      } else {
+        $("#loader").hide();
+        $("#curatorResult").html(account + " is trying to become a curator");
+      }
+    })
+    .on("confirmation", function (confirmationNumber, receipt) {
+      if (confirmationNumber === 1) {
+        $("#curatorResult").html(account + " became a curator");
+      }
+    })
+    .on("error", function (error) {
       $("#curatorResult").html("error becoming a curator: " + error.message);
-    } else {
-      $("#loader").hide();
-      $("#curatorResult").html(address + " is now a curator");
-    }
-  });
+    });
 });
 $("#approveTreeButton").click(function () {
   $("#loader").show();
@@ -813,8 +834,18 @@ $("#approveTreeButton").click(function () {
         );
       } else {
         $("#loader").hide();
-        $("#curatorResult").html($("#exifSHAApprove").val() + " is now paid");
+        $("#curatorResult").html(
+          $("#exifSHAApprove").val() + " is awaiting payment"
+        );
       }
+    })
+    .on("confirmation", function (confirmationNumber, receipt) {
+      if (confirmationNumber === 1) {
+        $("#curatorResult").html($("#exifSHAApprove").val() + " is paid!");
+      }
+    })
+    .on("error", function (error) {
+      $("#curatorResult").html("error paying tree reward: " + error.message);
     });
 });
 $("#rejectTreeButton").click(function () {
@@ -830,9 +861,25 @@ $("#rejectTreeButton").click(function () {
         $("#loader").hide();
         $("#curatorResult").html(
           $("#exifSHAReject").val() +
-            " is now rejected for " +
+            " is awaiting rejection for " +
             $("#rejectReason").val()
         );
       }
+    })
+    .on("confirmation", function (confirmationNumber, receipt) {
+      if (confirmationNumber === 1) {
+        $("#curatorResult").html(
+          $("#exifSHAReject").val() +
+            " has been rejected for " +
+            $("#rejectReason").val()
+        );
+      }
+    })
+    .on("error", function (error) {
+      $("#curatorResult").html(
+        "error with perofrming a rejection for " +
+          $("#exifSHAReject").val() +
+          error.message
+      );
     });
 });
