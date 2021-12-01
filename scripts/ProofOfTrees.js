@@ -4,8 +4,13 @@ if (typeof web3 !== "undefined") {
   Web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
 }
 
-const accounts = await ethereum.request({ method: "eth_accounts" });
-const treesWeb3 = new Web3.eth.contract(
+ethereum.request({ method: "eth_requestAccounts" });
+const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+const account = accounts[0];
+
+$("#showAccount").html(account);
+
+const treesWeb3 = Web3.eth.contract(
   [
     {
       inputs: [],
@@ -702,51 +707,65 @@ const treesWeb3 = new Web3.eth.contract(
   ],
   "0xE2157201a5E7853f3F88DA05420f0bF572cC4958"
 );
+var ProofOfTree = treesWeb3.at("0xE2157201a5E7853f3F88DA05420f0bF572cC4958");
+console.log(ProofOfTree);
+let curators = [];
+// const curatorCount = ProofOfTree.getCuratorCount.call(function (error, result) {
+//   console.log(result.args);
+// });
 
-// var ProofOfTree = treesWeb3.at("0xE2157201a5E7853f3F88DA05420f0bF572cC4958");
-console.log(treesWeb3);
-const init = async () => {
-  let curators = [];
-  const curatorCount = await treesWeb3.methods.getCuratorCount().call();
-  console.log(curatorCount);
-  for (var i = 1; i <= curatorCount; i++) {
-    const curator = await treesWeb3.methods.curators(i).call();
-    console.log(curator);
-    curators.push(curator);
-    $("#curators").html(curators);
+const curatorCount = ProofOfTree.getCuratorCount(function (error, result) {
+  console.log(result);
+});
+console.log(curatorCount);
+
+const treeCount = ProofOfTree.getTreesCount((error, result) => {
+  if (result) {
+    console.log(result);
   }
-};
-init();
+});
+console.log(curatorCount);
+// for (var i = 1; i <= curatorCount; i++) {
+//   const curator = await ProofOfTree.methods.curators(i).call();
+//   console.log(curator);
+//   curators.push(curator);
+// }
+// $("#curators").html(curators);
 
-// var pendingEvent = treesWeb3.LogPending();
-// pendingEvent.watch(function (error, result) {
-//   if (!error) {
-//     $("#loader").hide();
-//     $("#logPending").html(result.args.exifSHA);
-//   } else {
-//     $("#loader").hide();
-//     console.log(error);
-//   }
-// });
-// $("#createTreeButton").click(async () => {
-//   var tree = 0;
-//   var radioButtons = document.getElementsByName("selectedTree");
-//   if (radioButtons[1].checked) {
-//     tree = 1;
-//   }
-//   // console.log(tree);
-//   // console.log($("#exifSHACreate").val());
-//   // console.log($("#lat").val());
-//   // console.log($("#long").val());
-//   ProofOfTree.createTree(
-//     $("#exifSHACreate").val(),
-//     tree,
-//     $("#lat").val(),
-//     $("#long").val(),
-//     (err, res) => {
-//       if (err) {
-//         $("#loader").hide();
-//       }
-//     }
-//   );
-// });
+var pendingEvent = ProofOfTree.LogPending({}, "latest");
+pendingEvent.watch(function (error, result) {
+  if (!error) {
+    if (result.blockHash != $("insTrans").html()) {
+      $("#loader").hide();
+      $("#insTrans").html(result.blockHash);
+
+      $("#logPending").html(result.args.exifSHA);
+    }
+  } else {
+    $("#loader").hide();
+    console.log(error);
+  }
+});
+$("#createTreeButton").click(async () => {
+  var tree = 0;
+  var radioButtons = document.getElementsByName("selectedTree");
+  if (radioButtons[1].checked) {
+    tree = 1;
+  }
+  // console.log(tree);
+  // console.log($("#exifSHACreate").val());
+  // console.log($("#lat").val());
+  // console.log($("#long").val());
+  ProofOfTree.createTree(
+    { from: account },
+    $("#exifSHACreate").val(),
+    tree,
+    $("#lat").val(),
+    $("#long").val(),
+    (err, res) => {
+      if (err) {
+        $("#loader").hide();
+      }
+    }
+  );
+});
