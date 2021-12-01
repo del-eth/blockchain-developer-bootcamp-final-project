@@ -1,5 +1,10 @@
 if (typeof web3 !== "undefined") {
-  Web3 = new Web3(web3.currentProvider);
+  console.log("using infura");
+  Web3 = new Web3(
+    new Web3.providers.HttpProvider(
+      "https://ropsten.infura.io/v3/49587582bf51433dbb37f625eff3bc23"
+    )
+  );
 } else {
   Web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
 }
@@ -738,12 +743,8 @@ const curatorCount = ProofOfTree.getCuratorCount(function (error, result) {
 });
 console.log(curatorCount);
 
-const treeCount = ProofOfTree.getTreesCount((error, result) => {
-  if (result) {
-    console.log(result);
-  }
-});
-console.log(curatorCount);
+const treeCount = await ProofOfTree.getTreesCount().call();
+console.log(treeCount);
 // for (var i = 1; i <= curatorCount; i++) {
 //   const curator = await ProofOfTree.methods.curators(i).call();
 //   console.log(curator);
@@ -780,10 +781,31 @@ $("#createTreeButton").click(function () {
   console.log(typeof $("#exifSHACreate").val() === "string");
   console.log(typeof parseFloat($("#long").val()) === "string");
   console.log(typeof parseFloat($("#lat").val()) === "string");
-  var pot = ProofOfTree.createTree(
+  ProofOfTree.createTree(
     $("#exifSHACreate").val(),
     tree,
     parseInt($("#lat").val()),
     parseInt($("#long").val())
-  ).send({ from: account });
+  ).send({ from: accounts[0] });
+});
+// $("#becomeCurator").click(function () {
+//   console.log(account);
+//   $("#loader").show();
+//   console.log(ProofOfTree.becomeCurator);
+//   ProofOfTree.becomeCurator().send({ from: accounts[0] }, (error, result) => {
+//     if (result) {
+//       console.log(result);
+//     }
+//   });
+// });
+
+$("#becomeCurator").click(function () {
+  console.log(account);
+  $("#loader").show();
+  console.log(ProofOfTree.becomeCurator);
+  ProofOfTree.becomeCurator().send({ from: accounts[0] }, (error, result) => {
+    if (result) {
+      console.log(result);
+    }
+  });
 });
