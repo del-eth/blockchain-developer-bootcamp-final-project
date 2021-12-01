@@ -184,6 +184,20 @@ const treesWeb3 = Web3.eth.contract([
     constant: true,
   },
   {
+    inputs: [],
+    name: "curatorCount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+    constant: true,
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
@@ -387,6 +401,66 @@ const treesWeb3 = Web3.eth.contract([
     ],
     stateMutability: "nonpayable",
     type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "treeArray",
+    outputs: [
+      {
+        internalType: "address payable",
+        name: "curator",
+        type: "address",
+      },
+      {
+        internalType: "address payable",
+        name: "hippie",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "exifSHA",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "rejectedReason",
+        type: "string",
+      },
+      {
+        internalType: "enum ProofOfTrees.TreeStatus",
+        name: "tStatus",
+        type: "uint8",
+      },
+      {
+        internalType: "enum ProofOfTrees.TreeType",
+        name: "tType",
+        type: "uint8",
+      },
+      {
+        internalType: "int256",
+        name: "lat",
+        type: "int256",
+      },
+      {
+        internalType: "int256",
+        name: "long",
+        type: "int256",
+      },
+      {
+        internalType: "bool",
+        name: "valid",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+    constant: true,
   },
   {
     inputs: [],
@@ -647,6 +721,10 @@ const treesWeb3 = Web3.eth.contract([
 var ProofOfTree = treesWeb3.at("0x8ddF13e2cd8bDcba070c2A8B9982C24ecEd666Eb");
 console.log(ProofOfTree);
 var pendingEvent = ProofOfTree.LogPending();
+var curators = ProofOfTree.curators().call();
+console.log(curators);
+
+$("#curators").html(curators);
 pendingEvent.watch(function (error, result) {
   if (!error) {
     $("#loader").hide();

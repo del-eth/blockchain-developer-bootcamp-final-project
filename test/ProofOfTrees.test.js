@@ -1,6 +1,5 @@
 let BN = web3.utils.BN;
 let ProofOfTrees = artifacts.require("ProofOfTrees");
-let { catchRevert } = require("./exceptionsHelpers.js");
 const {
   trees: TreeStruct,
   isDefined,
@@ -195,10 +194,6 @@ contract("ProofOfTrees", function (accounts) {
           isDefined(treeStruct)("tStatus"),
           "Tree Struct should have a `tStatus` member"
         );
-        // assert(
-        //   isType(treeStruct)("tStatus")("TreeStatus"),
-        //   "`tStatus` should be of type `TreeStatus`"
-        // );
       });
 
       it("should have a `tType`", () => {
@@ -206,10 +201,6 @@ contract("ProofOfTrees", function (accounts) {
           isDefined(treeStruct)("tType"),
           "Tree Struct should have a `tType` member"
         );
-        //   assert(
-        //     isType(treeStruct)("tType")("TreeType"),
-        //     "`tType` should be of type `TreeType`"
-        //   );
       });
 
       it("should have a `curator`", () => {

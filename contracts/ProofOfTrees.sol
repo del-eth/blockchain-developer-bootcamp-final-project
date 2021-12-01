@@ -10,17 +10,22 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract ProofOfTrees is ERC20 {
     address public owner;
 
-    /// @dev track total number of trees
-    uint256 public treeCount;
     /// @dev track curator to use when creating a tree
     uint256 public nextCurator;
 
     /// @dev mapping of unique EXIF hashes (unique identifier) to determined tree data
     mapping(string => Tree) public trees;
+    /// @dev track trees in a simple array for ui purposes
+    Tree[] public treeArray;
+    /// @dev track total number of trees
+    uint256 public treeCount;
 
     /// @dev create a unique set of curators and their index. See https://ethereum.stackexchange.com/a/30481 for inspiration
     mapping(address => uint256) curatorIndex;
+    /// @dev track curators in a simple array to easily reference from their index and for ui purposes
     address[] public curators;
+    /// @dev track total number of curators
+    uint256 public curatorCount;
 
     /**
     /// @notice 
@@ -148,10 +153,16 @@ contract ProofOfTrees is ERC20 {
         _;
     }
 
+    /**
+        @notice this function creates a tree
+        @dev Proof Of Trees (TREE) contract
+        - instantiates 
+    */
     constructor() ERC20("Proof of Trees", "TREE") {
         _mint(msg.sender, 10**decimals());
         owner = msg.sender;
         treeCount = 0;
+        curatorCount = 0;
         // We will use position 0 to flag invalid address
         curators.push(address(address(0x0)));
         becomeCurator();
@@ -162,15 +173,10 @@ contract ProofOfTrees is ERC20 {
      * Functions
      */
 
-    function decrementTreeCount() private {
-        treeCount--;
-    }
-
-    function incrementTreeCount() private {
-        treeCount++;
-    }
-
-    function incrementCurator() private {
+    /**
+        @dev increments to the next available curator or goes back to the beginning if we're at the end
+    */
+    function incrementNextCurator() private {
         //since position 0 is invalid address, just use the length
         if (nextCurator == curators.length) {
             nextCurator = 1;
@@ -197,7 +203,7 @@ contract ProofOfTrees is ERC20 {
     ) public multipleCurators validTreeType(_tType) treeUnique(_exifSHA) {
         //do not let the sender be the curator, pick the next curator
         if (getCuratorAtPosition(nextCurator) == msg.sender) {
-            incrementCurator();
+            incrementNextCurator();
         }
         //some gas optimization avoiding an extra call upon Tree instantiation
         address _curator = getCuratorAtPosition(nextCurator);
@@ -217,7 +223,8 @@ contract ProofOfTrees is ERC20 {
             long: _long,
             valid: true
         });
-        incrementCurator();
+        incrementNextCurator();
+        treeCount++;
         emit LogPending(_exifSHA);
     }
 
@@ -261,6 +268,7 @@ contract ProofOfTrees is ERC20 {
         require(!curatorInArray(msg.sender), "you are already a curator!");
         curatorIndex[msg.sender] = curators.length;
         curators.push(msg.sender);
+        curatorCount++;
         emit LogCuratorAdded(msg.sender);
     }
 
