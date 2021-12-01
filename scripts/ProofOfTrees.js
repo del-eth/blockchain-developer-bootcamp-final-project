@@ -646,3 +646,22 @@ const treesWeb3 = Web3.eth.contract([
 
 var ProofOfTree = treesWeb3.at("0x8ddF13e2cd8bDcba070c2A8B9982C24ecEd666Eb");
 console.log(ProofOfTree);
+var pendingEvent = ProofOfTree.LogPending();
+pendingEvent.watch(function (error, result) {
+  if (!error) {
+    $("#loader").hide();
+    $("#logPending").html(result.args.exifSHA);
+  } else {
+    $("#loader").hide();
+    console.log(error);
+  }
+});
+$("#createTreeButton").click(function () {
+  var tree = 0;
+  var radioButtons = document.getElementsByName("selectedTree");
+  if (radioButtons[1].checked) {
+    tree = 1;
+  }
+  console.log(tree);
+  ProofOfTree.createTree($("#exifSha"), tree, $("#lat"), $("#long"));
+});

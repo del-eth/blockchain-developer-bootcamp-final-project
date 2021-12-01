@@ -2,25 +2,55 @@
   <head>
     <title>Proof of Tres</title>
   </head>
-  <body>
+  <body  style="background-color:rgba(128, 128, 128, 0.781);">
+    <h1>Proof of Trees</h1>
+    <h2 id="line"></h2>
+    <span id="linesp"></span>
+    <hr />
     <div class="container">
-      <h1>Proof of Trees</h1>
-      <span id="countIns"></span>
+        <h1>Hippie Actions 🧑‍🌾</h1>
+        <span id="countIns"></span>
+  
+        <h2>Create Tree 🌳</h2>
+        <form>
+            <label class="radio-inline">
+              <input type="radio" id="disiduous" name="selectedTree" checked>🌳
+            </label>
+            <label class="radio-inline">
+              <input type="radio" id="evergreen" name="selectedTree">🌲
+            </label>
+        </form>
+        <label for="exifSHACreate">EXIF SHA</label>
+        <input id="exifSHACreate" type="text" />
+  
+        <label for="lat">Lattitude</label>
+        <input id="lat" type="number" />
+  
+        <label for="long">Longitude</label>
+        <input id="long" type="number" />
+  
+        <button id="createTreeButton">Create Traee</button>
+        <h1>Curator Actions 🕵️</h1>
+        <span id="countIns"></span>
 
-      <h2 id="line"></h2>
-      <span id="linesp"></span>
-      <hr />
+        <h2>Become a Curator 🧝</h2>
+        <button id="rejectTreeButton">Become a Curator</button>
 
-      <label for="exifSHA" class="col-lg-2 control-label">EXIF SHA</label>
-      <input id="exifSHA" type="text" />
+        <h2>Approve/Pay for Tree 🤑🌳🤑</h2>
+  
+        <label for="exifSHAApprove">EXIF SHA</label>
+        <input id="exifSHAApprove" type="text" />
+  
+        <button id="rejectTreeButton">Pay Tree</button>
 
-      <label for="lat" class="col-lg-2 control-label">Lattitude</label>
-      <input id="lat" type="text" />
-
-      <label for="long" class="col-lg-2 control-label">Longitude</label>
-      <input id="long" type="text" />
-
-      <button id="createTreeButton">Create Tree</button>
+        <h2>Reject Tree 🔥🌳🔥</h2>
+  
+        <label for="exifSHAReject">EXIF SHA</label>
+        <input id="exifSHAReject" type="text" />
+        <label for="exifSHAReject">Reject Reason</label>
+        <input id="exifSHAReject" type="text" />
+  
+        <button id="rejectTreeButton">Reject Tree</button>
     </div>
     <script
       type="text/javascript"
