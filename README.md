@@ -1,11 +1,12 @@
 # blockchain-developer-bootcamp-final-project
 
 Public URL: https://competent-shirley-9fc8a5.netlify.app/
+
 Screencast: https://www.icloud.com/iclouddrive/0H4U4ICKM0TCumCNZTOpLzkjA#Screen_Recording_2021-12-01_at_4.10.43_AM
 
 To get started:
-`npm install`
-To run tests, trufffle also needs to be installed
+`npm install`,
+To run tests, truffle also needs to be installed
 `npm install truffle`
 `truffle test`
 
