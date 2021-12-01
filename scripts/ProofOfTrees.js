@@ -728,86 +728,110 @@ const treesWeb3 = new Web3.eth.Contract(
   "0xE2157201a5E7853f3F88DA05420f0bF572cC4958",
   { from: account }
 );
-// var ProofOfTree = treesWeb3.at("0xE2157201a5E7853f3F88DA05420f0bF572cC4958");
-// console.log(ProofOfTree);
-// console.log(ProofOfTree.options);
 let curators = [];
-// const curatorCount = ProofOfTree.getCuratorCount.call(function (error, result) {
-//   console.log(result.args);
-// });
-
+let trees = [];
 const curatorCount = await treesWeb3.methods.getCuratorCount().call();
 console.log(curatorCount);
 
 const treeCount = await treesWeb3.methods.getTreesCount().call();
 console.log(treeCount);
-// for (var i = 1; i <= curatorCount; i++) {
-//   const curator = await ProofOfTree.methods.curators(i).call();
-//   console.log(curator);
-//   curators.push(curator);
-// }
+
+for (let i = 0; i < curatorCount; i++) {
+  const curator = await treesWeb3.methods.curators(i).call();
+  curators.push(curator);
+  $("#curators").append("<li>" + curator + "</li>");
+}
+console.log(curators);
 // $("#curators").html(curators);
 
-// var pendingEvent = ProofOfTree.LogPending({}, "latest");
-// pendingEvent.watch(function (error, result) {
-//   if (!error) {
-//     if (result.blockHash != $("insTrans").html()) {
-//       $("#loader").hide();
-//       $("#insTrans").html(result.blockHash);
-
-//       $("#logPending").html(result.args.exifSHA);
-//     }
-//   } else {
-//     $("#loader").hide();
-//     console.log(error);
-//   }
-// });
+for (let i = 0; i < treeCount; i++) {
+  const tree = await treesWeb3.methods.trees(i).call();
+  trees.push(tree);
+  if (tree.valid) {
+    $("#trees").append(
+      "<li>" +
+        tree.exifSHA +
+        " - Hippie:" +
+        tree.hippie +
+        ", Curator: " +
+        tree.curator +
+        "</li>"
+    );
+  }
+}
+console.log(trees);
 $("#createTreeButton").click(function () {
-  console.log(account);
   $("#loader").show();
   var tree = 0;
   var radioButtons = document.getElementsByName("selectedTree");
   if (radioButtons[1].checked) {
     tree = 1;
   }
-  // console.log(tree);
-  // console.log($("#exifSHACreate").val());
-  // console.log($("#lat").val());
-  // console.log($("#long").val());
   console.log(typeof $("#exifSHACreate").val() === "string");
   console.log(typeof parseFloat($("#long").val()) === "string");
   console.log(typeof parseFloat($("#lat").val()) === "string");
-  treesWeb3
+  treesWeb3.methods
     .createTree(
       $("#exifSHACreate").val(),
       tree,
       parseInt($("#lat").val()),
       parseInt($("#long").val())
     )
-    .send({ from: accounts[0] });
+    .send(function (error, result) {
+      if (error) {
+        $("#loader").hide();
+        $("#curatorResult").html("error submitting tree: " + error.message);
+      } else {
+        $("#curatorResult").html(
+          $("#exifSHACreate").val() + " has been created"
+        );
+      }
+    });
 });
 $("#becomeCurator").click(function () {
   console.log(account);
   $("#loader").show();
-  console.log(treesWeb3.becomeCurator);
-  treesWeb3.methods.becomeCurator().send({ from: account }, (error, result) => {
-    if (result) {
-      console.log(result);
-    }
+  treesWeb3.methods.becomeCurator().send(function (error, result) {
     if (error) {
-      console.log(error);
+      $("#loader").hide();
+      $("#curatorResult").html("error becoming a curator: " + error.message);
+    } else {
+      $("#curatorResult").html(address + " is now a curator");
     }
   });
 });
-
-// $("#becomeCurator").click(function () {
-//   console.log(account);
-//   $("#loader").show();
-//   console.log(ProofOfTree.becomeCurator);
-//   const
-//   ProofOfTree.becomeCurator().send({ from: accounts[0] }, (error, result) => {
-//     if (result) {
-//       console.log(result);
-//     }
-//   });
-// });
+$("#approveTreeButton").click(function () {
+  console.log(account);
+  $("#loader").show();
+  treesWeb3.methods
+    .pay($("#exifSHAApprove").val())
+    .send(function (error, result) {
+      if (error) {
+        $("#loader").hide();
+        $("#curatorResult").html(
+          "error paying out tree reward: " + error.message
+        );
+      } else {
+        $("#curatorResult").html($("#exifSHAApprove").val() + " is now paid");
+      }
+    });
+});
+$("#rejectTreeButton").click(function () {
+  console.log(account);
+  $("#loader").show();
+  treesWeb3.methods
+    .reject($("#exifSHAReject").val(), $("#rejectReason").val())
+    .send(function (error, result) {
+      if (error) {
+        console.log(error);
+        $("#loader").hide();
+        $("#curatorResult").html("error rejecting tree: " + error.message);
+      } else {
+        $("#curatorResult").html(
+          $("#exifSHAReject").val() +
+            " is now rejected for " +
+            $("#rejectReason").val()
+        );
+      }
+    });
+});
