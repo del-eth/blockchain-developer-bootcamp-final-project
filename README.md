@@ -8,7 +8,15 @@ To get started:
 `npm install`,
 To run tests, truffle also needs to be installed
 `npm install truffle`
-`truffle test`
+
+from main directory, `truffle test` should be enough
+
+Running Locally:
+
+- I used `http-server` (`npm install http-server`) to build locally.
+
+Deployment:
+This was deployed with my own mnemonic via infura using this as a guide https://medium.com/coinmonks/5-minute-guide-to-deploying-smart-contracts-with-truffle-and-ropsten-b3e30d5ee1e
 
 ## Proof-of-Trees
 
