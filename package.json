@@ -22,8 +22,10 @@
   "dependencies": {
     "@openzeppelin/contracts": "4.4.0",
     "ganache-cli": "6.12.2",
+    "install": "0.13.0",
+    "npm": "8.1.4",
     "truffle-hdwallet-provider": "1.0.17",
-    "web3": "0.20.7"
+    "web3": "1.2.1"
   },
   "devDependencies": {
     "@truffle/hdwallet-provider": "1.7.0",
