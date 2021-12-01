@@ -662,6 +662,14 @@ $("#createTreeButton").click(function () {
   if (radioButtons[1].checked) {
     tree = 1;
   }
-  console.log(tree);
-  ProofOfTree.createTree($("#exifSha"), tree, $("#lat"), $("#long"));
+  // console.log(tree);
+  // console.log($("#exifSHACreate").val());
+  // console.log($("#lat").val());
+  // console.log($("#long").val());
+  ProofOfTree.createTree(
+    $("#exifSHACreate").val(),
+    tree,
+    $("#lat").val(),
+    $("#long").val()
+  );
 });
