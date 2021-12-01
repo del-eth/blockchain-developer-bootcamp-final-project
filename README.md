@@ -3,8 +3,10 @@
 Public URL: https://competent-shirley-9fc8a5.netlify.app/
 
 Screencast: https://www.icloud.com/iclouddrive/0H4U4ICKM0TCumCNZTOpLzkjA#Screen_Recording_2021-12-01_at_4.10.43_AM
+
 alternative upload: https://1drv.ms/v/s!Asd-9oawQftOg7QxRyrPdfoIXjl_2Q
 
+Certification NFT: 0x68d2EC28e3717edaf8bA10e33D3f3f6E12DadF96
 To get started:
 `npm install`,
 To run tests, truffle also needs to be installed
