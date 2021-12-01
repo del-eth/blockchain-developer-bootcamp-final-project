@@ -780,28 +780,28 @@ $("#createTreeButton").click(function () {
     .send(function (error, result) {
       if (error) {
         $("#loader").hide();
-        $("#curatorResult").html("error submitting tree: " + error.message);
+        $("#hippieResult").html("error submitting tree: " + error.message);
       } else {
-        $("#curatorResult").html(
+        $("#loader").hide();
+        $("#hippieResult").html(
           $("#exifSHACreate").val() + " has been created"
         );
       }
     });
 });
 $("#becomeCurator").click(function () {
-  console.log(account);
   $("#loader").show();
   treesWeb3.methods.becomeCurator().send(function (error, result) {
     if (error) {
       $("#loader").hide();
       $("#curatorResult").html("error becoming a curator: " + error.message);
     } else {
+      $("#loader").hide();
       $("#curatorResult").html(address + " is now a curator");
     }
   });
 });
 $("#approveTreeButton").click(function () {
-  console.log(account);
   $("#loader").show();
   treesWeb3.methods
     .pay($("#exifSHAApprove").val())
@@ -812,12 +812,12 @@ $("#approveTreeButton").click(function () {
           "error paying out tree reward: " + error.message
         );
       } else {
+        $("#loader").hide();
         $("#curatorResult").html($("#exifSHAApprove").val() + " is now paid");
       }
     });
 });
 $("#rejectTreeButton").click(function () {
-  console.log(account);
   $("#loader").show();
   treesWeb3.methods
     .reject($("#exifSHAReject").val(), $("#rejectReason").val())
@@ -827,6 +827,7 @@ $("#rejectTreeButton").click(function () {
         $("#loader").hide();
         $("#curatorResult").html("error rejecting tree: " + error.message);
       } else {
+        $("#loader").hide();
         $("#curatorResult").html(
           $("#exifSHAReject").val() +
             " is now rejected for " +
