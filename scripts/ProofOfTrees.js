@@ -7,6 +7,7 @@ if (typeof web3 !== "undefined") {
 ethereum.request({ method: "eth_requestAccounts" });
 const accounts = await ethereum.request({ method: "eth_requestAccounts" });
 const account = accounts[0];
+console.log(typeof account === "string");
 
 $("#showAccount").html(account);
 
@@ -709,6 +710,7 @@ const treesWeb3 = Web3.eth.contract(
 );
 var ProofOfTree = treesWeb3.at("0xE2157201a5E7853f3F88DA05420f0bF572cC4958");
 console.log(ProofOfTree);
+console.log(ProofOfTree.options);
 let curators = [];
 // const curatorCount = ProofOfTree.getCuratorCount.call(function (error, result) {
 //   console.log(result.args);
@@ -746,7 +748,8 @@ pendingEvent.watch(function (error, result) {
     console.log(error);
   }
 });
-$("#createTreeButton").click(async () => {
+$("#createTreeButton").click(function () {
+  $("#loader").show();
   var tree = 0;
   var radioButtons = document.getElementsByName("selectedTree");
   if (radioButtons[1].checked) {
@@ -756,16 +759,10 @@ $("#createTreeButton").click(async () => {
   // console.log($("#exifSHACreate").val());
   // console.log($("#lat").val());
   // console.log($("#long").val());
-  ProofOfTree.createTree(
-    { from: account },
+  var pot = ProofOfTree.createTree(
     $("#exifSHACreate").val(),
     tree,
     $("#lat").val(),
-    $("#long").val(),
-    (err, res) => {
-      if (err) {
-        $("#loader").hide();
-      }
-    }
-  );
+    $("#long").val()
+  ).send({ from: account });
 });
