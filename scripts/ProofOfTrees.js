@@ -143,6 +143,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [
@@ -186,6 +187,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [
@@ -205,6 +207,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [],
@@ -218,6 +221,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [
@@ -279,6 +283,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [],
@@ -292,6 +297,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [],
@@ -305,6 +311,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [],
@@ -318,6 +325,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [],
@@ -331,6 +339,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [
@@ -443,6 +452,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [
@@ -502,6 +512,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [
@@ -587,6 +598,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [
@@ -606,6 +618,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [
@@ -665,6 +678,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [],
@@ -678,6 +692,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [],
@@ -691,6 +706,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
     {
       inputs: [],
@@ -704,6 +720,7 @@ const treesWeb3 = Web3.eth.contract(
       ],
       stateMutability: "view",
       type: "function",
+      constant: true,
     },
   ],
   "0xE2157201a5E7853f3F88DA05420f0bF572cC4958"
@@ -734,21 +751,22 @@ console.log(curatorCount);
 // }
 // $("#curators").html(curators);
 
-var pendingEvent = ProofOfTree.LogPending({}, "latest");
-pendingEvent.watch(function (error, result) {
-  if (!error) {
-    if (result.blockHash != $("insTrans").html()) {
-      $("#loader").hide();
-      $("#insTrans").html(result.blockHash);
+// var pendingEvent = ProofOfTree.LogPending({}, "latest");
+// pendingEvent.watch(function (error, result) {
+//   if (!error) {
+//     if (result.blockHash != $("insTrans").html()) {
+//       $("#loader").hide();
+//       $("#insTrans").html(result.blockHash);
 
-      $("#logPending").html(result.args.exifSHA);
-    }
-  } else {
-    $("#loader").hide();
-    console.log(error);
-  }
-});
+//       $("#logPending").html(result.args.exifSHA);
+//     }
+//   } else {
+//     $("#loader").hide();
+//     console.log(error);
+//   }
+// });
 $("#createTreeButton").click(function () {
+  console.log(account);
   $("#loader").show();
   var tree = 0;
   var radioButtons = document.getElementsByName("selectedTree");
@@ -759,10 +777,13 @@ $("#createTreeButton").click(function () {
   // console.log($("#exifSHACreate").val());
   // console.log($("#lat").val());
   // console.log($("#long").val());
+  console.log(typeof $("#exifSHACreate").val() === "string");
+  console.log(typeof parseFloat($("#long").val()) === "string");
+  console.log(typeof parseFloat($("#lat").val()) === "string");
   var pot = ProofOfTree.createTree(
     $("#exifSHACreate").val(),
     tree,
-    $("#lat").val(),
-    $("#long").val()
+    parseInt($("#lat").val()),
+    parseInt($("#long").val())
   ).send({ from: account });
 });
