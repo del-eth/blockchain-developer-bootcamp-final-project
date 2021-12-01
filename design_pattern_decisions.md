@@ -4,6 +4,10 @@
 
 - I decided to implement the OpenZeppelin ERC20 interface
 
+## Access Control Design Patterns
+
+- There's a lot of validations/modifiers around making sure a curator can't be a hippie or that a hippie can't also be a curator for the same tree.
+
 ## Gas Optimization
 
 - Avoiding expensive loop operations:
